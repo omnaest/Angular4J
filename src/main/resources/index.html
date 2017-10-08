@@ -1,0 +1,49 @@
+<html itemscope itemtype="http://schema.org/Article">
+<head>
+<meta charset="utf8" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${title}</title>
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/mobile-angular-ui-base.css">
+<link rel="stylesheet" href="/css/mobile-angular-ui-desktop.css">
+<link rel="stylesheet" href="/css/mobile-angular-ui-hover.css">
+<link rel="stylesheet" href="/css/angular-datepicker.min.css">
+
+${css}
+
+<script src="/js/vendor/angular.min.js"></script>
+<script src="/js/vendor/chart.js"></script>
+<script src="/js/vendor/angular-chart.js"></script>
+<script src="/js/vendor/mobile-angular-ui.core.js"></script>
+<script src="/js/vendor/mobile-angular-ui.gestures.js"></script>
+<script src="/js/vendor/mobile-angular-ui.js"></script>
+<script src="/js/vendor/angular-datepicker.js"></script>
+
+${scripts}
+
+<script src="/js/app.js"></script>
+<script src="/js/component/metabolismview/metabolismview-component.js"></script>
+<script src="/js/component/detailpanel/detailpanel-component.js"></script>
+<script src="/js/component/detailpanel/view-component.js"></script>
+<script src="/js/component/detailpanel/enzymes-component.js"></script>
+<script src="/js/component/detailpanel/metabolites-component.js"></script>
+<script src="/js/component/tabs/tabs-component.js"></script>
+<script src="/js/component/tabs/tab-component.js"></script>
+
+</head>
+<body style="height:100%;">
+    
+	<div ng-app="app" 
+	     ng-controller="appController" 
+	     style="overflow:auto; height:100%;"
+	>
+        ${components}          
+	</div>
+	
+	<div style="position:absolute; right:10px; bottom:6px; z-index:1000;">
+		<span style="font-size:xx-small;">Optimized for Chrome</span>
+	</div>
+</body>
+</html>

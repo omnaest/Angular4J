@@ -1,0 +1,52 @@
+<div style="width:100%;margin-left:15px;"
+>
+	<input class="btn btn-default" type="button" value="Load" ng-click="$ctrl.load()">
+	<input class="btn btn-default" type="button" value="Save" ng-click="$ctrl.save()">
+	<input class="btn btn-default" type="button" value="Clear" ng-click="$ctrl.clear()">
+</div>
+
+<div class="container"
+     style="padding-top:15px; width:100%;"
+>
+	<div class="row">
+	    <div class="col-sm-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">Active enzymes</div>
+				<div class="panel-body">
+			 		<div ng-repeat="enzyme in $ctrl.activeEnzymes"
+					     class="checkbox"
+					>
+					  <label>
+					    <input type="checkbox" ng-model="enzyme.value" ng-change="enzyme.deactivate()" />{{enzyme.name}}
+					  </label>
+					</div>
+			    </div>
+			</div>
+	    </div>
+		<div class="col-sm-6">
+			<div class="panel panel-default">
+			    <div class="panel-heading">Available enzymes</div>
+			    <div class="panel-body">
+			        <div class="form-group">
+					  <label for="metaboliteFilter">Metabolite filter</label>
+					  <input type="text" 
+					         class="form-control" 
+					         id="metaboliteFilter" 
+					         placeholder="Metabolite" 
+					         ng-model="$ctrl.metaboliteFilter"
+					         ng-change="$ctrl.renderLists()"
+					  >
+					</div>			        
+					<div ng-repeat="enzyme in $ctrl.availableEnzymes"
+					     class="checkbox"
+					>
+					  <label>
+					    <input type="checkbox" ng-model="enzyme.value" ng-change="enzyme.activate()" />{{enzyme.name}}
+					  </label>
+					</div>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>
+

@@ -1,0 +1,8 @@
+
+<ul class="nav nav-tabs" >
+    <li ng-repeat="tab in $ctrl.tabs" class="{{tab.active?'active':''}}"><a href="#" ng-click="tab.activate()">{{tab.name}}</a></li>
+</ul>
+<div class="panel panel-default"
+     style="height:calc(100% - 100px);overflow: auto;"
+     ng-transclude
+></div>
