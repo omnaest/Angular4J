@@ -21,6 +21,8 @@ package org.omnaest.ui.angular.utils;
 import org.omnaest.ui.angular.app.internal.raw.RawCustomHtmlElement;
 import org.omnaest.ui.angular.app.internal.raw.RawCustomHtmlElementAdapter;
 import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
+import org.omnaest.ui.angular.app.internal.raw.RawTemplateHtmlElement;
+import org.omnaest.ui.angular.app.internal.raw.RawTemplateHtmlElementAdapter;
 import org.omnaest.utils.XMLHelper;
 
 /**
@@ -39,13 +41,17 @@ public class RawHtmlElementRenderer
 			{
 				model = new RawCustomHtmlElementAdapter().marshal((RawCustomHtmlElement) htmlElement);
 			}
+			else if (htmlElement instanceof RawTemplateHtmlElement)
+			{
+				model = new RawTemplateHtmlElementAdapter().marshal((RawTemplateHtmlElement) htmlElement);
+			}
 			else
 			{
 				model = htmlElement;
 			}
 			return XMLHelper.serializer()
-							.withoutHeader()
 							.withRootTypes(htmlElement.getClass())
+							.withoutHeader()
 							.serialize(model);
 		} catch (Exception e)
 		{

@@ -18,6 +18,7 @@
 */
 package org.omnaest.ui.angular.app.component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -63,4 +64,12 @@ public interface Component
 	public void addFunction(Function function);
 
 	public void addFunction(ServiceFunction function);
+
+	RawHtmlElement renderReference(Map<String, String> bindings, RawHtmlElement...transclusions);
+
+	Component withTransclusion(List<Component> components);
+
+	Component withTransclusion(Component... components);
+
+	List<Component> getSubComponents();
 }

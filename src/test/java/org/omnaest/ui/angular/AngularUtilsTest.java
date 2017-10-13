@@ -20,6 +20,7 @@ package org.omnaest.ui.angular;
 
 import org.junit.Test;
 import org.omnaest.ui.angular.app.AngularApplication.RenderResult;
+import org.omnaest.ui.angular.app.component.button.ButtonComponent;
 import org.omnaest.ui.angular.app.component.panel.PanelComponent;
 import org.omnaest.utils.JSONHelper;
 
@@ -29,9 +30,12 @@ public class AngularUtilsTest
 	@Test
 	public void testNewInstance() throws Exception
 	{
+		PanelComponent panel1 = new PanelComponent("panel1");
+		ButtonComponent button1 = new ButtonComponent("button1");
+
 		RenderResult renderResult = AngularUtils.newInstance()
 												.setTitle("Unit test")
-												.addComponent(new PanelComponent("panel1"))
+												.addComponent(panel1.withTransclusion(button1))
 												.renderHtml();
 		System.out.println(renderResult.getIndexHtml());
 

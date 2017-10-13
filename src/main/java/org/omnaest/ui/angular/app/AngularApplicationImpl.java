@@ -55,17 +55,22 @@ public class AngularApplicationImpl implements AngularApplication
 		scriptBuilder.addJavaScript(ResourceLoader	.loadJavaScriptBinding(this)
 													.get());
 
-		this.components.forEach(component ->
-		{
-			String name = component.getName();
-			ComponentRenderResult result = component.render(this.createRenderContext());
-			String reference = component.renderReference()
-										.asString();
-
-			scriptBuilder.addJavaScriptFrom(result);
-			componentsHtmlBuilder.addComponentHtml(name, reference, result);
-			cssBuilder.addCssFrom(result);
-		});
+		this.components	.stream()
+						.distinct()
+						.forEach(component ->
+						{
+							boolean withReference = true;
+							this.addToComponentsBuilder(scriptBuilder, componentsHtmlBuilder, cssBuilder, component, withReference);
+						});
+		this.components	.stream()
+						.flatMap(component -> component	.getSubComponents()
+														.stream())
+						.distinct()
+						.forEach(component ->
+						{
+							boolean withReference = false;
+							this.addToComponentsBuilder(scriptBuilder, componentsHtmlBuilder, cssBuilder, component, withReference);
+						});
 
 		String indexHtml = ResourceLoader	.load(this, "/index.html")
 											.replaceToken("${title}", StringUtils.defaultString(this.title))
@@ -87,6 +92,20 @@ public class AngularApplicationImpl implements AngularApplication
 				return componentsHtmlBuilder.getComponentToHtml();
 			}
 		};
+	}
+
+	private void addToComponentsBuilder(ScriptBuilder scriptBuilder, ComponentsHtmlBuilder componentsHtmlBuilder, CSSBuilder cssBuilder, Component component,
+										boolean withReference)
+	{
+		String name = component.getName();
+		ComponentRenderResult result = component.render(this.createRenderContext());
+		String reference = component.renderReference()
+									.asString();
+
+		scriptBuilder.addJavaScriptFrom(result);
+
+		componentsHtmlBuilder.addComponentHtml(name, reference, result, withReference);
+		cssBuilder.addCssFrom(result);
 	}
 
 	private RenderContext createRenderContext()

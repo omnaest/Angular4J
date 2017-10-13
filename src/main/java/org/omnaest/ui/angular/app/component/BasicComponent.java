@@ -20,9 +20,11 @@ package org.omnaest.ui.angular.app.component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.omnaest.ui.angular.app.internal.JavaScriptFunctionBuilder;
 import org.omnaest.ui.angular.app.internal.raw.RawCustomHtmlElement;
@@ -36,6 +38,7 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	protected String name;
 
 	private List<Service>				services		= new ArrayList<>();
+	private List<Component>				subComponents	= new ArrayList<>();
 	private JavaScriptFunctionBuilder	functionBuilder	= new JavaScriptFunctionBuilder();
 
 	public BasicComponent(String name)
@@ -126,7 +129,7 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	}
 
 	@Override
-	public RawHtmlElement renderReference(Map<String, String> bindings)
+	public RawCustomHtmlElement renderReference(Map<String, String> bindings)
 	{
 		return new RawCustomHtmlElement(this.name);
 	}
@@ -134,8 +137,37 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	@Override
 	public RawHtmlElement renderReference()
 	{
-		Map<String, String> bindings = null;
+		Map<String, String> bindings = Collections.emptyMap();
 		return this.renderReference(bindings);
+	}
+
+	@Override
+	public Component withTransclusion(Component... components)
+	{
+		return this.withTransclusion(Arrays.asList(components));
+	}
+
+	@Override
+	public Component withTransclusion(List<Component> components)
+	{
+		this.subComponents.addAll(components);
+		return new DecoratorComponentWithTransclusion<Component>(this, components);
+	}
+
+	@Override
+	public RawHtmlElement renderReference(Map<String, String> bindings, RawHtmlElement... transclusions)
+	{
+		return this	.renderReference(bindings)
+					.addElements(Arrays.asList(transclusions));
+	}
+
+	@Override
+	public List<Component> getSubComponents()
+	{
+		return this.subComponents	.stream()
+									.flatMap(component -> Stream.concat(Stream.of(component), component	.getSubComponents()
+																										.stream()))
+									.collect(Collectors.toList());
 	}
 
 }

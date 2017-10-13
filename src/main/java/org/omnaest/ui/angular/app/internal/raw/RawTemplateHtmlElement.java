@@ -18,46 +18,50 @@
 */
 package org.omnaest.ui.angular.app.internal.raw;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.namespace.QName;
+
+import org.omnaest.utils.XMLHelper;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlJavaTypeAdapter(value = RawCustomHtmlElementAdapter.class)
-public class RawCustomHtmlElement extends RawCompositeHtmlElement
+@XmlJavaTypeAdapter(value = RawTemplateHtmlElementAdapter.class)
+public class RawTemplateHtmlElement extends RawHtmlElement
 {
 	@XmlTransient
-	protected QName tag;
+	protected JAXBElement<?> element;
 
-	public RawCustomHtmlElement(String tag)
-	{
-		this.setTag(tag);
-	}
-
-	public RawCustomHtmlElement()
+	public RawTemplateHtmlElement()
 	{
 		super();
 	}
 
-	public RawCustomHtmlElement setTag(String tag)
+	public RawTemplateHtmlElement(String content)
 	{
-		this.tag = new QName(tag);
+		super();
+
+		try
+		{
+			this.setElement(XMLHelper.parse(content, JAXBElement.class));
+		} catch (Exception e)
+		{
+			throw new IllegalStateException(content, e);
+		}
+	}
+
+	public RawTemplateHtmlElement setElement(JAXBElement<?> element)
+	{
+		this.element = element;
 		return this;
 	}
 
-	public QName getTag()
+	public JAXBElement<?> getElement()
 	{
-		return this.tag;
-	}
-
-	public RawCustomHtmlElement setTag(QName tag)
-	{
-		this.tag = tag;
-		return this;
+		return this.element;
 	}
 
 }

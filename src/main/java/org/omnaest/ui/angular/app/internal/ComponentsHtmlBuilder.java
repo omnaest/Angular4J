@@ -34,15 +34,18 @@ public class ComponentsHtmlBuilder
 		return this.componentToHtml;
 	}
 
-	public void addComponentHtml(String name, String reference, ComponentRenderResult result)
+	public void addComponentHtml(String name, String reference, ComponentRenderResult result, boolean withReference)
 	{
-		this.addComponentHtml(name, reference, result.getHtml());
+		this.addComponentHtml(name, reference, result.getHtml(), withReference);
 	}
 
-	public void addComponentHtml(String name, String reference, String html)
+	public void addComponentHtml(String name, String reference, String html, boolean withReference)
 	{
 		this.componentToHtml.put(name, html);
-		this.componentToReference.put(name, reference);
+		if (withReference)
+		{
+			this.componentToReference.put(name, reference);
+		}
 	}
 
 	public String renderComponentReferences()

@@ -42,6 +42,10 @@ public class RawCompositeHtmlElement extends RawHtmlElement
 	@XmlJavaTypeAdapter(value = RawCustomHtmlElementAdapter.class)
 	private List<RawCustomHtmlElement> customElements = new ArrayList<>();
 
+	@XmlAnyElement
+	@XmlJavaTypeAdapter(value = RawCustomHtmlElementAdapter.class)
+	private List<RawTemplateHtmlElement> templateElements = new ArrayList<>();
+
 	public RawCompositeHtmlElement addElements(Collection<RawHtmlElement> elements)
 	{
 		if (elements != null)
@@ -56,6 +60,10 @@ public class RawCompositeHtmlElement extends RawHtmlElement
 		if (element instanceof RawCustomHtmlElement)
 		{
 			this.customElements.add((RawCustomHtmlElement) element);
+		}
+		else if (element instanceof RawTemplateHtmlElement)
+		{
+			this.templateElements.add((RawTemplateHtmlElement) element);
 		}
 		else
 		{

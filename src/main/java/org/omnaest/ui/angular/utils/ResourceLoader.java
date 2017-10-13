@@ -58,6 +58,13 @@ public class ResourceLoader
 				+ ".css");
 	}
 
+	public static Resource loadJavaHTMLBinding(Object instance)
+	{
+		return load(instance, StringUtils.capitalize(instance	.getClass()
+																.getSimpleName())
+				+ ".html");
+	}
+
 	public static Resource load(Object instance, String resource)
 	{
 		return load(instance.getClass(), resource);

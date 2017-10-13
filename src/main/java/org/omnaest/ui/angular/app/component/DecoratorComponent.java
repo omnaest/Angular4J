@@ -18,6 +18,7 @@
 */
 package org.omnaest.ui.angular.app.component;
 
+import java.util.List;
 import java.util.Map;
 
 import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
@@ -63,9 +64,33 @@ public class DecoratorComponent<C extends Component> implements Component
 	}
 
 	@Override
+	public RawHtmlElement renderReference(Map<String, String> bindings, RawHtmlElement... transclusions)
+	{
+		return this.component.renderReference(bindings, transclusions);
+	}
+
+	@Override
 	public RawHtmlElement renderReference()
 	{
 		return this.component.renderReference();
+	}
+
+	@Override
+	public Component withTransclusion(List<Component> components)
+	{
+		return this.component.withTransclusion(components);
+	}
+
+	@Override
+	public Component withTransclusion(Component... components)
+	{
+		return this.component.withTransclusion(components);
+	}
+
+	@Override
+	public List<Component> getSubComponents()
+	{
+		return this.component.getSubComponents();
 	}
 
 }

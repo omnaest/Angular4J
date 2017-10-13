@@ -25,17 +25,20 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.omnaest.ui.angular.app.internal.raw.RawCompositeHtmlElement;
 import org.omnaest.ui.angular.app.internal.raw.RawDivElement;
 import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
-import org.omnaest.utils.XMLHelper;
+import org.omnaest.ui.angular.app.internal.raw.RawTemplateHtmlElement;
+import org.omnaest.ui.angular.utils.ResourceLoader;
+import org.omnaest.ui.angular.utils.ResourceLoader.Resource;
 
 public class HtmlComponent extends BasicComponent
 {
 	private List<CSSClass>		cssClasses		= new ArrayList<>();
 	private List<HtmlElement>	htmlElements	= new ArrayList<>();
-	private Component			subComponent;
 
 	private abstract class BasicHtmlElementImpl implements HtmlElement
 	{
@@ -74,9 +77,29 @@ public class HtmlComponent extends BasicComponent
 
 	}
 
+	private class TemplateHtmlElementImpl extends BasicHtmlElementImpl implements TemplateHtmlElement
+	{
+		private String template;
+
+		@Override
+		public RawHtmlElement render(RenderContext context)
+		{
+			return new RawTemplateHtmlElement(this.template).setCssClass(this.cssClass)
+															.setStyle(this.style)
+															.setAttributes(this.attributes);
+		}
+
+		@Override
+		public TemplateHtmlElement setTemplate(String template)
+		{
+			this.template = template;
+			return this;
+		}
+
+	}
+
 	private class ComponentReferencingHtmlElementImpl extends BasicHtmlElementImpl implements ComponentReferencingHtmlElement
 	{
-
 		private Component component;
 
 		@Override
@@ -143,6 +166,7 @@ public class HtmlComponent extends BasicComponent
 			return this.addElement(() -> element);
 		}
 
+		@Override
 		public CompositeHtmlElement addElement(Supplier<HtmlElement> supplier)
 		{
 			HtmlElement element = supplier.get();
@@ -150,10 +174,21 @@ public class HtmlComponent extends BasicComponent
 			return this;
 		}
 
+		@Override
 		public CompositeHtmlElement addComponent(Component component)
 		{
 			HtmlElement element = new ComponentReferencingHtmlElementImpl().setReference(component);
 			this.elements.add(element);
+			return this;
+		}
+
+		@Override
+		public CompositeHtmlElement addComponents(Stream<Component> components)
+		{
+			if (components != null)
+			{
+				components.forEach(this::addComponent);
+			}
 			return this;
 		}
 
@@ -196,6 +231,11 @@ public class HtmlComponent extends BasicComponent
 		public ComponentReferencingHtmlElement setReference(Component component);
 	}
 
+	public static interface TemplateHtmlElement extends HtmlElement
+	{
+		public TemplateHtmlElement setTemplate(String template);
+	}
+
 	public static interface CompositeHtmlElement extends HtmlElement
 	{
 		/**
@@ -205,6 +245,12 @@ public class HtmlComponent extends BasicComponent
 		 * @return this
 		 */
 		public CompositeHtmlElement newDiv(Consumer<DivElement> div);
+
+		public CompositeHtmlElement addComponent(Component component);
+
+		public CompositeHtmlElement addComponents(Stream<Component> components);
+
+		public CompositeHtmlElement addElement(Supplier<HtmlElement> supplier);
 
 	}
 
@@ -218,25 +264,27 @@ public class HtmlComponent extends BasicComponent
 		super(name);
 	}
 
-	private String renderSubComponent(RenderContext context)
-	{
-		String reference = this.subComponent != null ? this.subComponent.renderReference()
-																		.asString()
-				: "";
-
-		return reference;
-	}
-
 	public void register(CSSClass cssClass)
 	{
 		this.cssClasses.add(cssClass);
 	}
 
-	public void newDiv(Consumer<DivElement> div)
+	public HtmlComponent newDiv(Consumer<DivElement> div)
 	{
 		DivElement divElement = new DivElementImpl();
 		div.accept(divElement);
-		this.htmlElements.add(divElement);
+		return this.addElement(() -> divElement);
+	}
+
+	public HtmlComponent addElement(Supplier<HtmlElement> supplier)
+	{
+		this.htmlElements.add(supplier.get());
+		return this;
+	}
+
+	public HtmlComponent addElement(HtmlElement htmlElement)
+	{
+		return this.addElement(() -> htmlElement);
 	}
 
 	@Override
@@ -251,9 +299,8 @@ public class HtmlComponent extends BasicComponent
 	protected String generateHtml(RenderContext context)
 	{
 		return this.htmlElements.stream()
-								.map(htmlElement -> XMLHelper	.serializer()
-																.withoutHeader()
-																.serialize(htmlElement.render(context)))
+								.map(htmlElement -> htmlElement	.render(context)
+																.asString())
 								.collect(Collectors.joining("\n"));
 	}
 
@@ -261,6 +308,16 @@ public class HtmlComponent extends BasicComponent
 	protected String generateJavaScript(RenderContext context)
 	{
 		return "";
+	}
+
+	public void bindHtmlTemplate(Component component)
+	{
+		Resource resource = ResourceLoader.loadJavaHTMLBinding(component);
+		String template = resource.get();
+		if (StringUtils.isNotBlank(template))
+		{
+			this.addElement(new TemplateHtmlElementImpl().setTemplate(template));
+		}
 	}
 
 }

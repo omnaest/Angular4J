@@ -16,20 +16,14 @@
 
 
 */
-package org.omnaest.ui.angular.app.component.panel;
+package org.omnaest.ui.angular.app.component.button;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.omnaest.ui.angular.app.component.Component;
 import org.omnaest.ui.angular.app.component.DecoratorComponent;
 import org.omnaest.ui.angular.app.component.HtmlComponent;
 
-public class PanelComponent extends DecoratorComponent<HtmlComponent>
+public class ButtonComponent extends DecoratorComponent<HtmlComponent>
 {
-	private List<Component> referenceComponents = new ArrayList<>();
-
-	public PanelComponent(String name)
+	public ButtonComponent(String name)
 	{
 		super(new HtmlComponent(name));
 
@@ -38,19 +32,7 @@ public class PanelComponent extends DecoratorComponent<HtmlComponent>
 
 	private void init()
 	{
-		this.component.newDiv(div ->
-		{
-			div	.addComponents(this.referenceComponents.stream())
-				.setClass("panel panel-default")
-				.setStyle("height:calc(100% - 100px);overflow: auto;")
-				.setAttribute("ng-transclude", "");
-		});
-	}
-
-	public PanelComponent addComponent(Component component)
-	{
-		this.referenceComponents.add(component);
-		return this;
+		this.component.bindHtmlTemplate(this);
 	}
 
 }
