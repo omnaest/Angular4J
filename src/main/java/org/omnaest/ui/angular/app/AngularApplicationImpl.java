@@ -59,7 +59,8 @@ public class AngularApplicationImpl implements AngularApplication
 		{
 			String name = component.getName();
 			ComponentRenderResult result = component.render(this.createRenderContext());
-			String reference = component.renderReference();
+			String reference = component.renderReference()
+										.asString();
 
 			scriptBuilder.addJavaScriptFrom(result);
 			componentsHtmlBuilder.addComponentHtml(name, reference, result);

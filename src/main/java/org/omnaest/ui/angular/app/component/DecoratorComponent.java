@@ -20,6 +20,8 @@ package org.omnaest.ui.angular.app.component;
 
 import java.util.Map;
 
+import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
+
 public class DecoratorComponent<C extends Component> implements Component
 {
 	protected C component;
@@ -55,13 +57,13 @@ public class DecoratorComponent<C extends Component> implements Component
 	}
 
 	@Override
-	public String renderReference(Map<String, String> bindings)
+	public RawHtmlElement renderReference(Map<String, String> bindings)
 	{
 		return this.component.renderReference(bindings);
 	}
 
 	@Override
-	public String renderReference()
+	public RawHtmlElement renderReference()
 	{
 		return this.component.renderReference();
 	}

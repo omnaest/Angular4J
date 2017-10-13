@@ -24,16 +24,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+@XmlSeeAlso(RawCustomHtmlElement.class)
+@XmlAccessorType(XmlAccessType.NONE)
 public class RawCompositeHtmlElement extends RawHtmlElement
 {
-
 	@XmlElementRef
 	private List<RawHtmlElement> elements = new ArrayList<>();
 
-	@XmlElementRef
-	private List<RawHtmlElement> elementSupplier = new ArrayList<>();
+	@XmlAnyElement
+	@XmlJavaTypeAdapter(value = RawCustomHtmlElementAdapter.class)
+	private List<RawCustomHtmlElement> customElements = new ArrayList<>();
 
 	public RawCompositeHtmlElement addElements(Collection<RawHtmlElement> elements)
 	{
@@ -46,7 +53,14 @@ public class RawCompositeHtmlElement extends RawHtmlElement
 
 	public RawCompositeHtmlElement addElement(RawHtmlElement element)
 	{
-		this.elements.add(element);
+		if (element instanceof RawCustomHtmlElement)
+		{
+			this.customElements.add((RawCustomHtmlElement) element);
+		}
+		else
+		{
+			this.elements.add(element);
+		}
 		return this;
 	}
 

@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.omnaest.ui.angular.app.internal.raw.RawCompositeHtmlElement;
@@ -36,20 +37,11 @@ public class HtmlComponent extends BasicComponent
 	private List<HtmlElement>	htmlElements	= new ArrayList<>();
 	private Component			subComponent;
 
-	private abstract class CompositeHtmlElementImpl implements CompositeHtmlElement
+	private abstract class BasicHtmlElementImpl implements HtmlElement
 	{
 		protected String				cssClass;
 		protected String				style;
 		protected Map<String, String>	attributes	= new LinkedHashMap<>();
-		protected List<HtmlElement>		elements	= new ArrayList<>();
-
-		@Override
-		public HtmlElement setClass(CSSClass cssClass)
-		{
-			this.setClass(cssClass.name());
-			HtmlComponent.this.register(cssClass);
-			return this;
-		}
 
 		@Override
 		public HtmlElement setClass(String cssClass)
@@ -59,16 +51,75 @@ public class HtmlComponent extends BasicComponent
 		}
 
 		@Override
-		public CompositeHtmlElement setStyle(String style)
+		public HtmlElement setStyle(String style)
 		{
 			this.style = style;
 			return this;
 		}
 
 		@Override
-		public CompositeHtmlElement setAttribute(String name, String value)
+		public HtmlElement setAttribute(String name, String value)
 		{
 			this.attributes.put(name, value);
+			return this;
+		}
+
+		@Override
+		public HtmlElement setClass(CSSClass cssClass)
+		{
+			this.setClass(cssClass.name());
+			HtmlComponent.this.register(cssClass);
+			return this;
+		}
+
+	}
+
+	private class ComponentReferencingHtmlElementImpl extends BasicHtmlElementImpl implements ComponentReferencingHtmlElement
+	{
+
+		private Component component;
+
+		@Override
+		public RawHtmlElement render(RenderContext context)
+		{
+			return this.component	.renderReference()
+									.setCssClass(this.cssClass)
+									.setStyle(this.style)
+									.setAttributes(this.attributes);
+		}
+
+		@Override
+		public ComponentReferencingHtmlElement setReference(Component component)
+		{
+			this.component = component;
+			return this;
+		}
+
+	}
+
+	private abstract class CompositeHtmlElementImpl extends BasicHtmlElementImpl implements CompositeHtmlElement
+	{
+
+		protected List<HtmlElement> elements = new ArrayList<>();
+
+		@Override
+		public CompositeHtmlElement setClass(String cssClass)
+		{
+			super.setClass(cssClass);
+			return this;
+		}
+
+		@Override
+		public CompositeHtmlElement setStyle(String style)
+		{
+			super.setStyle(style);
+			return this;
+		}
+
+		@Override
+		public CompositeHtmlElement setAttribute(String name, String value)
+		{
+			super.setAttribute(name, value);
 			return this;
 		}
 
@@ -81,8 +132,7 @@ public class HtmlComponent extends BasicComponent
 								.setAttributes(this.attributes)
 								.addElements(this.elements	.stream()
 															.map(element -> element.render(context))
-															.collect(Collectors.toList()))
-								.setContent(() -> HtmlComponent.this.renderSubComponent(context));
+															.collect(Collectors.toList()));
 		}
 
 		@Override
@@ -90,6 +140,19 @@ public class HtmlComponent extends BasicComponent
 		{
 			DivElementImpl element = new DivElementImpl();
 			div.accept(element);
+			return this.addElement(() -> element);
+		}
+
+		public CompositeHtmlElement addElement(Supplier<HtmlElement> supplier)
+		{
+			HtmlElement element = supplier.get();
+			this.elements.add(element);
+			return this;
+		}
+
+		public CompositeHtmlElement addComponent(Component component)
+		{
+			HtmlElement element = new ComponentReferencingHtmlElementImpl().setReference(component);
 			this.elements.add(element);
 			return this;
 		}
@@ -128,6 +191,11 @@ public class HtmlComponent extends BasicComponent
 		public HtmlElement setStyle(String style);
 	}
 
+	public static interface ComponentReferencingHtmlElement extends HtmlElement
+	{
+		public ComponentReferencingHtmlElement setReference(Component component);
+	}
+
 	public static interface CompositeHtmlElement extends HtmlElement
 	{
 		/**
@@ -152,7 +220,9 @@ public class HtmlComponent extends BasicComponent
 
 	private String renderSubComponent(RenderContext context)
 	{
-		String reference = this.subComponent.renderReference();
+		String reference = this.subComponent != null ? this.subComponent.renderReference()
+																		.asString()
+				: "";
 
 		return reference;
 	}

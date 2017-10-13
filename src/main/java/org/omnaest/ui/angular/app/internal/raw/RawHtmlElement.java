@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
 
+import org.omnaest.ui.angular.utils.RawHtmlElementRenderer;
+
 @XmlAccessorType(XmlAccessType.NONE)
 public class RawHtmlElement
 {
@@ -108,6 +110,11 @@ public class RawHtmlElement
 	{
 		this.style = style;
 		return this;
+	}
+
+	public String asString()
+	{
+		return RawHtmlElementRenderer.render(this);
 	}
 
 }

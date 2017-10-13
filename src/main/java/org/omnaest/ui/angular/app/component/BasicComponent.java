@@ -24,14 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
-
 import org.omnaest.ui.angular.app.internal.JavaScriptFunctionBuilder;
+import org.omnaest.ui.angular.app.internal.raw.RawCustomHtmlElement;
+import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
 import org.omnaest.ui.angular.app.service.Service;
 import org.omnaest.ui.angular.app.service.ServiceConsumer;
 import org.omnaest.ui.angular.utils.ResourceLoader;
-import org.omnaest.utils.XMLHelper;
 
 public abstract class BasicComponent implements Component, ServiceConsumer
 {
@@ -128,15 +126,13 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	}
 
 	@Override
-	public String renderReference(Map<String, String> bindings)
+	public RawHtmlElement renderReference(Map<String, String> bindings)
 	{
-		return XMLHelper.serializer()
-						.withoutHeader()
-						.serialize(new JAXBElement<String>(new QName(this.name), String.class, ""));
+		return new RawCustomHtmlElement(this.name);
 	}
 
 	@Override
-	public String renderReference()
+	public RawHtmlElement renderReference()
 	{
 		Map<String, String> bindings = null;
 		return this.renderReference(bindings);

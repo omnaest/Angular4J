@@ -21,6 +21,7 @@ package org.omnaest.ui.angular.app.component;
 import java.util.List;
 import java.util.Map;
 
+import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
 import org.omnaest.ui.angular.app.service.Service;
 
 public interface Component
@@ -49,13 +50,13 @@ public interface Component
 	 * 
 	 * @return
 	 */
-	public String renderReference(Map<String, String> bindings);
+	public RawHtmlElement renderReference(Map<String, String> bindings);
 
 	/**
 	 * @see #renderReference(Map)
 	 * @return
 	 */
-	public String renderReference();
+	public RawHtmlElement renderReference();
 
 	public String getName();
 
