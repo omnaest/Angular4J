@@ -23,11 +23,11 @@ import java.util.Map;
 
 import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
 
-public class DecoratorComponent<C extends Component> implements Component
+public class ComponentDecorator<C extends Component> implements Component
 {
 	protected C component;
 
-	public DecoratorComponent(C component)
+	public ComponentDecorator(C component)
 	{
 		super();
 		this.component = component;
@@ -76,12 +76,6 @@ public class DecoratorComponent<C extends Component> implements Component
 	}
 
 	@Override
-	public Component withTransclusion(List<Component> components)
-	{
-		return this.component.withTransclusion(components);
-	}
-
-	@Override
 	public Component withTransclusion(Component... components)
 	{
 		return this.component.withTransclusion(components);
@@ -91,6 +85,18 @@ public class DecoratorComponent<C extends Component> implements Component
 	public List<Component> getSubComponents()
 	{
 		return this.component.getSubComponents();
+	}
+
+	@Override
+	public Component withTransclusion(List<ComponentProvider<?>> components)
+	{
+		return this.component.withTransclusion(components);
+	}
+
+	@Override
+	public Component withTransclusion(ComponentProvider<?>... components)
+	{
+		return this.component.withTransclusion(components);
 	}
 
 }

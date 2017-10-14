@@ -16,26 +16,24 @@
 
 
 */
-package org.omnaest.ui.angular;
+package org.omnaest.ui.angular.app.component.theme.bootstrap;
 
-import org.omnaest.ui.angular.app.AngularApplication;
-import org.omnaest.ui.angular.app.AngularApplicationImpl;
 import org.omnaest.ui.angular.app.component.theme.Theme;
-import org.omnaest.ui.angular.app.component.theme.ThemeProvider;
+import org.omnaest.ui.angular.app.component.theme.bootstrap.button.ButtonComponent;
+import org.omnaest.ui.angular.app.component.theme.bootstrap.panel.PanelComponent;
 
-/**
- * @see AngularApplication
- * @author omnaest
- */
-public class AngularUtils
+public class BootstrapTheme implements Theme
 {
-	public static AngularApplication newInstance()
+
+	@Override
+	public ButtonComponent newButton(String name)
 	{
-		return new AngularApplicationImpl();
+		return new ButtonComponent(name);
 	}
 
-	public static Theme newTheme(ThemeProvider themes)
+	@Override
+	public PanelComponent newPanel(String name)
 	{
-		return themes.get();
+		return new PanelComponent(name);
 	}
 }

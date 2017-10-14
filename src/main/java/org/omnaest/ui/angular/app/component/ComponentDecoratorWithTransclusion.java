@@ -25,11 +25,11 @@ import java.util.stream.Collectors;
 
 import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
 
-public class DecoratorComponentWithTransclusion<C extends Component> extends DecoratorComponent<C>
+public class ComponentDecoratorWithTransclusion<C extends Component> extends ComponentDecorator<C>
 {
 	protected List<Component> transclusions;
 
-	public DecoratorComponentWithTransclusion(C component, List<Component> transclusions)
+	public ComponentDecoratorWithTransclusion(C component, List<Component> transclusions)
 	{
 		super(component);
 		this.transclusions = transclusions;

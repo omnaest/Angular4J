@@ -147,14 +147,26 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	@Override
 	public Component withTransclusion(Component... components)
 	{
-		return this.withTransclusion(Arrays.asList(components));
+		return this.withTransclusion(Arrays	.asList(components)
+											.stream()
+											.map(component -> (ComponentProvider<Component>) () -> component)
+											.collect(Collectors.toList()));
 	}
 
 	@Override
-	public Component withTransclusion(List<Component> components)
+	public Component withTransclusion(ComponentProvider<?>... componentProviders)
 	{
+		return this.withTransclusion(Arrays.asList(componentProviders));
+	}
+
+	@Override
+	public Component withTransclusion(List<ComponentProvider<? extends Component>> componentProviders)
+	{
+		List<Component> components = componentProviders	.stream()
+														.map(provider -> provider.get())
+														.collect(Collectors.toList());
 		this.subComponents.addAll(components);
-		return new DecoratorComponentWithTransclusion<Component>(this, components);
+		return new ComponentDecoratorWithTransclusion<Component>(this, components);
 	}
 
 	@Override

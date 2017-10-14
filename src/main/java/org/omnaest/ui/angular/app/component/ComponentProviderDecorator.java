@@ -16,26 +16,22 @@
 
 
 */
-package org.omnaest.ui.angular;
+package org.omnaest.ui.angular.app.component;
 
-import org.omnaest.ui.angular.app.AngularApplication;
-import org.omnaest.ui.angular.app.AngularApplicationImpl;
-import org.omnaest.ui.angular.app.component.theme.Theme;
-import org.omnaest.ui.angular.app.component.theme.ThemeProvider;
-
-/**
- * @see AngularApplication
- * @author omnaest
- */
-public class AngularUtils
+public class ComponentProviderDecorator<C extends Component> implements ComponentProvider<C>
 {
-	public static AngularApplication newInstance()
+	protected C component;
+
+	public ComponentProviderDecorator(C component)
 	{
-		return new AngularApplicationImpl();
+		super();
+		this.component = component;
 	}
 
-	public static Theme newTheme(ThemeProvider themes)
+	@Override
+	public C get()
 	{
-		return themes.get();
+		return this.component;
 	}
+
 }

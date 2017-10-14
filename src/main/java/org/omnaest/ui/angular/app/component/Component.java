@@ -69,9 +69,11 @@ public interface Component
 
 	RawHtmlElement renderReference(Map<String, String> bindings, RawHtmlElement... transclusions);
 
-	Component withTransclusion(List<Component> components);
-
 	Component withTransclusion(Component... components);
+
+	Component withTransclusion(List<ComponentProvider<?>> components);
+
+	Component withTransclusion(ComponentProvider<?>... components);
 
 	List<Component> getSubComponents();
 }

@@ -317,15 +317,31 @@ public class HtmlComponent extends BasicComponent
 		return "";
 	}
 
+	public void bindHtmlTemplate(ComponentProvider<? extends Component> componentProvider)
+	{
+		Consumer<Resource> resourceModifier = null;
+		this.bindHtmlTemplate(componentProvider, resourceModifier);
+	}
+
 	public void bindHtmlTemplate(Component component)
 	{
 		Consumer<Resource> resourceModifier = null;
 		this.bindHtmlTemplate(component, resourceModifier);
 	}
 
+	public void bindHtmlTemplate(ComponentProvider<? extends Component> component, Consumer<Resource> resourceModifier)
+	{
+		this.bindHtmlTemplate((Object) component, resourceModifier);
+	}
+
 	public void bindHtmlTemplate(Component component, Consumer<Resource> resourceModifier)
 	{
-		Resource resource = ResourceLoader.loadJavaHTMLBinding(component);
+		this.bindHtmlTemplate((Object) component, resourceModifier);
+	}
+
+	public void bindHtmlTemplate(Object instance, Consumer<Resource> resourceModifier)
+	{
+		Resource resource = ResourceLoader.loadJavaHTMLBinding(instance);
 
 		this.addElement(new TemplateHtmlElementImpl().setTemplate(() ->
 		{

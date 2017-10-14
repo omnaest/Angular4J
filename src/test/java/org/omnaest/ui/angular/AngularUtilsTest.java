@@ -26,9 +26,9 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.omnaest.ui.angular.app.AngularApplication.RenderResult;
-import org.omnaest.ui.angular.app.component.button.ButtonComponent;
 import org.omnaest.ui.angular.app.component.function.SimpleFunction;
-import org.omnaest.ui.angular.app.component.panel.PanelComponent;
+import org.omnaest.ui.angular.app.component.theme.bootstrap.button.ButtonComponent;
+import org.omnaest.ui.angular.app.component.theme.bootstrap.panel.PanelComponent;
 import org.omnaest.utils.JSONHelper;
 
 public class AngularUtilsTest

@@ -11,8 +11,12 @@ angular
 						'$http',
 						'$timeout',
 						'SharedState',
-						function($scope, $rootScope, $http, $timeout,
-								SharedState) {
+						function(	$scope, 
+									$rootScope, 
+									$http, 
+									$timeout
+								) 
+						{
 							var self = this;
 
 						} ]);

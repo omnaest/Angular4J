@@ -16,26 +16,11 @@
 
 
 */
-package org.omnaest.ui.angular;
+package org.omnaest.ui.angular.app.component.theme;
 
-import org.omnaest.ui.angular.app.AngularApplication;
-import org.omnaest.ui.angular.app.AngularApplicationImpl;
-import org.omnaest.ui.angular.app.component.theme.Theme;
-import org.omnaest.ui.angular.app.component.theme.ThemeProvider;
+import java.util.function.Supplier;
 
-/**
- * @see AngularApplication
- * @author omnaest
- */
-public class AngularUtils
+public interface ThemeProvider extends Supplier<Theme>
 {
-	public static AngularApplication newInstance()
-	{
-		return new AngularApplicationImpl();
-	}
 
-	public static Theme newTheme(ThemeProvider themes)
-	{
-		return themes.get();
-	}
 }

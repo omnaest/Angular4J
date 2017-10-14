@@ -16,16 +16,16 @@
 
 
 */
-package org.omnaest.ui.angular.app.component.panel;
+package org.omnaest.ui.angular.app.component.theme.bootstrap.panel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.omnaest.ui.angular.app.component.Component;
-import org.omnaest.ui.angular.app.component.DecoratorComponent;
+import org.omnaest.ui.angular.app.component.ComponentProviderDecoratorWithTransclusion;
 import org.omnaest.ui.angular.app.component.HtmlComponent;
 
-public class PanelComponent extends DecoratorComponent<HtmlComponent>
+public class PanelComponent extends ComponentProviderDecoratorWithTransclusion<HtmlComponent>
 {
 	private List<Component> referenceComponents = new ArrayList<>();
 

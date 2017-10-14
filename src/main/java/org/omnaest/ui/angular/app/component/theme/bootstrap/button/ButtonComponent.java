@@ -16,13 +16,14 @@
 
 
 */
-package org.omnaest.ui.angular.app.component.button;
+package org.omnaest.ui.angular.app.component.theme.bootstrap.button;
 
-import org.omnaest.ui.angular.app.component.DecoratorComponent;
+import org.omnaest.ui.angular.app.component.Component.Function;
+import org.omnaest.ui.angular.app.component.ComponentProviderDecorator;
 import org.omnaest.ui.angular.app.component.HtmlComponent;
 import org.omnaest.ui.angular.app.component.function.SimpleNamedFunction;
 
-public class ButtonComponent extends DecoratorComponent<HtmlComponent>
+public class ButtonComponent extends ComponentProviderDecorator<HtmlComponent>
 {
 	private String label = "";
 
@@ -33,7 +34,7 @@ public class ButtonComponent extends DecoratorComponent<HtmlComponent>
 		this.init();
 	}
 
-	public ButtonComponent setLabel(String label)
+	public ButtonComponent withLabel(String label)
 	{
 		this.label = label;
 		return this;
@@ -46,7 +47,7 @@ public class ButtonComponent extends DecoratorComponent<HtmlComponent>
 
 	public void onClick(Function function)
 	{
-		this.addFunction(new SimpleNamedFunction("onClick", function));
+		this.component.addFunction(new SimpleNamedFunction("onClick", function));
 	}
 
 }
