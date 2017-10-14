@@ -36,8 +36,8 @@ import org.omnaest.ui.angular.utils.ResourceLoader.Resource;
 
 public class HtmlComponent extends BasicComponent
 {
-	private List<CSSClass>		cssClasses		= new ArrayList<>();
-	private List<HtmlElement>	htmlElements	= new ArrayList<>();
+	private List<CSSClass>				cssClasses		= new ArrayList<>();
+	private List<Supplier<HtmlElement>>	htmlElements	= new ArrayList<>();
 
 	private abstract class BasicHtmlElementImpl implements HtmlElement
 	{
@@ -209,6 +209,28 @@ public class HtmlComponent extends BasicComponent
 			return new RawDivElement();
 		}
 
+		@Override
+		public DivElement setClass(String cssClass)
+		{
+			super.setClass(cssClass);
+			return this;
+		}
+
+		@Override
+		public DivElement setStyle(String style)
+		{
+
+			super.setStyle(style);
+			return this;
+		}
+
+		@Override
+		public DivElement setAttribute(String name, String value)
+		{
+			super.setAttribute(name, value);
+			return this;
+		}
+
 	}
 
 	public static interface CSSClass
@@ -264,6 +286,14 @@ public class HtmlComponent extends BasicComponent
 	public static interface DivElement extends CompositeHtmlElement
 	{
 
+		@Override
+		DivElement setClass(String cssClass);
+
+		@Override
+		DivElement setAttribute(String name, String value);
+
+		@Override
+		DivElement setStyle(String style);
 	}
 
 	public HtmlComponent(String name)
@@ -276,16 +306,19 @@ public class HtmlComponent extends BasicComponent
 		this.cssClasses.add(cssClass);
 	}
 
-	public HtmlComponent newDiv(Consumer<DivElement> div)
+	public HtmlComponent newDiv(Consumer<DivElement> divConsumer)
 	{
-		DivElement divElement = new DivElementImpl();
-		div.accept(divElement);
-		return this.addElement(() -> divElement);
+		return this.addElement(() ->
+		{
+			DivElement divElement = new DivElementImpl();
+			divConsumer.accept(divElement);
+			return divElement;
+		});
 	}
 
 	public HtmlComponent addElement(Supplier<HtmlElement> supplier)
 	{
-		this.htmlElements.add(supplier.get());
+		this.htmlElements.add(supplier);
 		return this;
 	}
 
@@ -306,7 +339,8 @@ public class HtmlComponent extends BasicComponent
 	protected String generateHtml(RenderContext context)
 	{
 		return this.htmlElements.stream()
-								.map(htmlElement -> htmlElement	.render(context)
+								.map(htmlElement -> htmlElement	.get()
+																.render(context)
 																.asString())
 								.collect(Collectors.joining("\n"));
 	}

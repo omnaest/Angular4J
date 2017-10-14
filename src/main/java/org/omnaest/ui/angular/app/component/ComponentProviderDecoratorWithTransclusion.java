@@ -20,27 +20,27 @@ package org.omnaest.ui.angular.app.component;
 
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class ComponentProviderDecoratorWithTransclusion<C extends Component> extends ComponentProviderDecorator<C>
 {
-
 	public ComponentProviderDecoratorWithTransclusion(C component)
 	{
 		super(component);
 	}
 
-	public Component withTransclusion(List<ComponentProvider<?>> components)
+	public ComponentProvider<C> withTransclusion(List<ComponentProvider<?>> components)
 	{
-		return this.component.withTransclusion(components);
+		return () -> (C) this.component.withTransclusion(components);
 	}
 
-	public Component withTransclusion(ComponentProvider<?>... components)
+	public ComponentProvider<C> withTransclusion(ComponentProvider<?>... components)
 	{
-		return this.component.withTransclusion(components);
+		return () -> (C) this.component.withTransclusion(components);
 	}
 
-	public Component withTransclusion(Component... components)
+	public ComponentProvider<C> withTransclusion(Component... components)
 	{
-		return this.component.withTransclusion(components);
+		return () -> (C) this.component.withTransclusion(components);
 	}
 
 }

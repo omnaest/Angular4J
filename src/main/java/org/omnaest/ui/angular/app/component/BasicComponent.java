@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,9 +39,9 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 {
 	protected String name;
 
-	private List<Service>				services		= new ArrayList<>();
-	private List<Component>				subComponents	= new ArrayList<>();
-	private JavaScriptFunctionBuilder	functionBuilder	= new JavaScriptFunctionBuilder();
+	private List<Service>						services		= new ArrayList<>();
+	private List<Supplier<Stream<Component>>>	subComponents	= new ArrayList<>();
+	private JavaScriptFunctionBuilder			functionBuilder	= new JavaScriptFunctionBuilder();
 
 	public BasicComponent(String name)
 	{
@@ -51,7 +52,7 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	@Override
 	public String getName()
 	{
-		return this.name;
+		return this.generateReferenceTag();
 	}
 
 	@Override
@@ -85,7 +86,7 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	private String determineTermplateUrl(RenderContext context)
 	{
 		String baseUrl = context.getBaseUrl();
-		return (baseUrl != null ? baseUrl + "/" : "") + this.name + ".html" + "?" + System.currentTimeMillis();
+		return (baseUrl != null ? baseUrl + "/" : "") + this.generateReferenceTag() + ".html" + "?" + System.currentTimeMillis();
 	}
 
 	private String generateDependencyParameters()
@@ -134,7 +135,14 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	@Override
 	public RawCustomHtmlElement renderReference(Map<String, String> bindings)
 	{
-		return new RawCustomHtmlElement(this.name);
+		return new RawCustomHtmlElement(this.generateReferenceTag());
+	}
+
+	private String generateReferenceTag()
+	{
+		//angular does need reference tags in dash syntax and not in camelcase form
+		return this.name.replaceAll("([A-Z])", "-$1")
+						.toLowerCase();
 	}
 
 	@Override
@@ -142,6 +150,19 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	{
 		Map<String, String> bindings = Collections.emptyMap();
 		return this.renderReference(bindings);
+	}
+
+	public Component withTransclusion(Supplier<List<ComponentProvider<? extends Component>>> componentProviders)
+	{
+		this.subComponents.add(() ->
+		{
+			List<Component> components = componentProviders	.get()
+															.stream()
+															.map(provider -> provider.get())
+															.collect(Collectors.toList());
+			return components.stream();
+		});
+		return new ComponentDecoratorWithTransclusion<Component>(this, componentProviders);
 	}
 
 	@Override
@@ -162,11 +183,7 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	@Override
 	public Component withTransclusion(List<ComponentProvider<? extends Component>> componentProviders)
 	{
-		List<Component> components = componentProviders	.stream()
-														.map(provider -> provider.get())
-														.collect(Collectors.toList());
-		this.subComponents.addAll(components);
-		return new ComponentDecoratorWithTransclusion<Component>(this, components);
+		return this.withTransclusion(() -> componentProviders);
 	}
 
 	@Override
@@ -180,6 +197,7 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	public List<Component> getSubComponents()
 	{
 		return this.subComponents	.stream()
+									.flatMap(componentStreamSupplier -> componentStreamSupplier.get())
 									.flatMap(component -> Stream.concat(Stream.of(component), component	.getSubComponents()
 																										.stream()))
 									.collect(Collectors.toList());

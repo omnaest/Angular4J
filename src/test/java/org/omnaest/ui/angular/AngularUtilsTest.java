@@ -27,8 +27,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.omnaest.ui.angular.app.AngularApplication.RenderResult;
 import org.omnaest.ui.angular.app.component.function.SimpleFunction;
-import org.omnaest.ui.angular.app.component.theme.bootstrap.button.ButtonComponent;
-import org.omnaest.ui.angular.app.component.theme.bootstrap.panel.PanelComponent;
+import org.omnaest.ui.angular.app.component.theme.bootstrap.button.BootstrapButtonComponent;
+import org.omnaest.ui.angular.app.component.theme.bootstrap.panel.BootstrapPanelComponent;
 import org.omnaest.utils.JSONHelper;
 
 public class AngularUtilsTest
@@ -37,8 +37,8 @@ public class AngularUtilsTest
 	@Test
 	public void testNewInstance() throws Exception
 	{
-		PanelComponent panel1 = new PanelComponent("panel1");
-		ButtonComponent button1 = new ButtonComponent("button1");
+		BootstrapPanelComponent panel1 = new BootstrapPanelComponent("panel1");
+		BootstrapButtonComponent button1 = new BootstrapButtonComponent("button1");
 
 		button1.onClick(new SimpleFunction().append("alert('totoro');"));
 

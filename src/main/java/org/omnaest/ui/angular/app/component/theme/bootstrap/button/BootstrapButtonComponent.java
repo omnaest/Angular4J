@@ -22,19 +22,21 @@ import org.omnaest.ui.angular.app.component.Component.Function;
 import org.omnaest.ui.angular.app.component.ComponentProviderDecorator;
 import org.omnaest.ui.angular.app.component.HtmlComponent;
 import org.omnaest.ui.angular.app.component.function.SimpleNamedFunction;
+import org.omnaest.ui.angular.app.component.theme.ButtonComponent;
 
-public class ButtonComponent extends ComponentProviderDecorator<HtmlComponent>
+public class BootstrapButtonComponent extends ComponentProviderDecorator<HtmlComponent> implements ButtonComponent
 {
 	private String label = "";
 
-	public ButtonComponent(String name)
+	public BootstrapButtonComponent(String name)
 	{
 		super(new HtmlComponent(name));
 
 		this.init();
 	}
 
-	public ButtonComponent withLabel(String label)
+	@Override
+	public BootstrapButtonComponent withLabel(String label)
 	{
 		this.label = label;
 		return this;
@@ -45,6 +47,7 @@ public class ButtonComponent extends ComponentProviderDecorator<HtmlComponent>
 		this.component.bindHtmlTemplate(this, resource -> resource.replaceToken("${label}", this.label));
 	}
 
+	@Override
 	public void onClick(Function function)
 	{
 		this.component.addFunction(new SimpleNamedFunction("onClick", function));

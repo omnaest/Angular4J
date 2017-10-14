@@ -19,17 +19,20 @@
 package org.omnaest.ui.angular.app.component.theme.bootstrap.panel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.omnaest.ui.angular.app.component.Component;
+import org.omnaest.ui.angular.app.component.ComponentProvider;
 import org.omnaest.ui.angular.app.component.ComponentProviderDecoratorWithTransclusion;
 import org.omnaest.ui.angular.app.component.HtmlComponent;
+import org.omnaest.ui.angular.app.component.theme.PanelComponent;
 
-public class PanelComponent extends ComponentProviderDecoratorWithTransclusion<HtmlComponent>
+public class BootstrapPanelComponent extends ComponentProviderDecoratorWithTransclusion<HtmlComponent> implements PanelComponent
 {
 	private List<Component> referenceComponents = new ArrayList<>();
 
-	public PanelComponent(String name)
+	public BootstrapPanelComponent(String name)
 	{
 		super(new HtmlComponent(name));
 
@@ -47,10 +50,39 @@ public class PanelComponent extends ComponentProviderDecoratorWithTransclusion<H
 		});
 	}
 
-	public PanelComponent addComponent(Component component)
+	protected PanelComponent addComponent(Component component)
 	{
 		this.referenceComponents.add(component);
 		return this;
+	}
+
+	protected PanelComponent addComponent(ComponentProvider<? extends Component> component)
+	{
+		return this.addComponent(component.get());
+	}
+
+	@Override
+	public ComponentProvider<HtmlComponent> withTransclusion(List<ComponentProvider<?>> components)
+	{
+		components.forEach(component -> this.addComponent(component));
+		return super.withTransclusion(components);
+	}
+
+	@Override
+	public ComponentProvider<HtmlComponent> withTransclusion(ComponentProvider<?>... components)
+	{
+		Arrays	.asList(components)
+				.forEach(component -> this.addComponent(component));
+		return super.withTransclusion(components);
+	}
+
+	@Override
+	public ComponentProvider<HtmlComponent> withTransclusion(Component... components)
+	{
+		Arrays	.asList(components)
+				.forEach(component -> this.addComponent(component));
+		return super.withTransclusion(components);
+
 	}
 
 }

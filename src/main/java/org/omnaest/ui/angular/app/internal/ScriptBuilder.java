@@ -18,8 +18,8 @@
 */
 package org.omnaest.ui.angular.app.internal;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,18 +32,18 @@ import org.omnaest.utils.XMLHelper;
  */
 public class ScriptBuilder
 {
-	private List<String> scripts = new ArrayList<>();
+	private Map<String, String> scripts = new LinkedHashMap<>();
 
-	public ScriptBuilder addJavaScriptFrom(ComponentRenderResult componentRenderResult)
+	public ScriptBuilder addJavaScriptFrom(String componentName, ComponentRenderResult componentRenderResult)
 	{
-		return this.addJavaScript(componentRenderResult.getJavaScript());
+		return this.addJavaScript(componentName, componentRenderResult.getJavaScript());
 	}
 
-	public ScriptBuilder addJavaScript(String javaScript)
+	public ScriptBuilder addJavaScript(String componentName, String javaScript)
 	{
 		if (StringUtils.isNotBlank(javaScript))
 		{
-			this.scripts.add(javaScript);
+			this.scripts.put(componentName, javaScript);
 		}
 		return this;
 	}
@@ -52,7 +52,8 @@ public class ScriptBuilder
 	{
 		return XMLHelper.serializer()
 						.withoutHeader()
-						.serialize(new RawScript().setContent(this.scripts	.stream()
+						.serialize(new RawScript().setContent(this.scripts	.values()
+																			.stream()
 																			.collect(Collectors.joining("\n"))));
 	}
 }

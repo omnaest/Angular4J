@@ -23,6 +23,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.omnaest.ui.angular.app.component.Component;
+import org.omnaest.ui.angular.app.component.ComponentProvider;
 
 public interface AngularApplication
 {
@@ -35,6 +36,8 @@ public interface AngularApplication
 	}
 
 	public AngularApplication addComponent(Component component);
+
+	public AngularApplication addComponent(ComponentProvider<? extends Component> component);
 
 	public RenderResult renderHtml();
 

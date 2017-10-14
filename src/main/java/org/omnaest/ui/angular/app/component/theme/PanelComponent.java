@@ -18,11 +18,18 @@
 */
 package org.omnaest.ui.angular.app.component.theme;
 
-public interface Theme
+import java.util.List;
+
+import org.omnaest.ui.angular.app.component.Component;
+import org.omnaest.ui.angular.app.component.ComponentProvider;
+import org.omnaest.ui.angular.app.component.HtmlComponent;
+
+public interface PanelComponent extends ComponentProvider<HtmlComponent>
 {
-	public ButtonComponent newButton(String name);
 
-	public PanelComponent newPanel(String name);
+	ComponentProvider<HtmlComponent> withTransclusion(Component... components);
 
-	public GridComponent newGridComponent(String name);
+	ComponentProvider<HtmlComponent> withTransclusion(ComponentProvider<?>... components);
+
+	ComponentProvider<HtmlComponent> withTransclusion(List<ComponentProvider<?>> components);
 }

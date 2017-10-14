@@ -18,11 +18,15 @@
 */
 package org.omnaest.ui.angular.app.component.theme;
 
-public interface Theme
+import org.omnaest.ui.angular.app.component.Component.Function;
+import org.omnaest.ui.angular.app.component.ComponentProvider;
+import org.omnaest.ui.angular.app.component.HtmlComponent;
+
+public interface ButtonComponent extends ComponentProvider<HtmlComponent>
 {
-	public ButtonComponent newButton(String name);
 
-	public PanelComponent newPanel(String name);
+	public void onClick(Function function);
 
-	public GridComponent newGridComponent(String name);
+	public ButtonComponent withLabel(String label);
+
 }

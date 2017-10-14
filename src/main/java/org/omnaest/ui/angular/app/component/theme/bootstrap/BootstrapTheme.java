@@ -18,9 +18,13 @@
 */
 package org.omnaest.ui.angular.app.component.theme.bootstrap;
 
+import org.omnaest.ui.angular.app.component.theme.ButtonComponent;
+import org.omnaest.ui.angular.app.component.theme.GridComponent;
+import org.omnaest.ui.angular.app.component.theme.PanelComponent;
 import org.omnaest.ui.angular.app.component.theme.Theme;
-import org.omnaest.ui.angular.app.component.theme.bootstrap.button.ButtonComponent;
-import org.omnaest.ui.angular.app.component.theme.bootstrap.panel.PanelComponent;
+import org.omnaest.ui.angular.app.component.theme.bootstrap.button.BootstrapButtonComponent;
+import org.omnaest.ui.angular.app.component.theme.bootstrap.grid.BootstrapGridComponent;
+import org.omnaest.ui.angular.app.component.theme.bootstrap.panel.BootstrapPanelComponent;
 
 public class BootstrapTheme implements Theme
 {
@@ -28,12 +32,18 @@ public class BootstrapTheme implements Theme
 	@Override
 	public ButtonComponent newButton(String name)
 	{
-		return new ButtonComponent(name);
+		return new BootstrapButtonComponent(name);
 	}
 
 	@Override
 	public PanelComponent newPanel(String name)
 	{
-		return new PanelComponent(name);
+		return new BootstrapPanelComponent(name);
+	}
+
+	@Override
+	public GridComponent newGridComponent(String name)
+	{
+		return new BootstrapGridComponent(name);
 	}
 }

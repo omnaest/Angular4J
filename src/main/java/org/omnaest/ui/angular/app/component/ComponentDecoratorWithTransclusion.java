@@ -21,15 +21,16 @@ package org.omnaest.ui.angular.app.component;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
 
 public class ComponentDecoratorWithTransclusion<C extends Component> extends ComponentDecorator<C>
 {
-	protected List<Component> transclusions;
+	protected Supplier<List<ComponentProvider<? extends Component>>> transclusions;
 
-	public ComponentDecoratorWithTransclusion(C component, List<Component> transclusions)
+	public ComponentDecoratorWithTransclusion(C component, Supplier<List<ComponentProvider<? extends Component>>> transclusions)
 	{
 		super(component);
 		this.transclusions = transclusions;
@@ -38,7 +39,9 @@ public class ComponentDecoratorWithTransclusion<C extends Component> extends Com
 	@Override
 	public RawHtmlElement renderReference(Map<String, String> bindings)
 	{
-		return super.renderReference(bindings, this.transclusions	.stream()
+		return super.renderReference(bindings, this.transclusions	.get()
+																	.stream()
+																	.map(provider -> provider.get())
 																	.map(component -> component.renderReference())
 																	.collect(Collectors.toList())
 																	.toArray(new RawHtmlElement[0]));

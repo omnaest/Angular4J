@@ -23,10 +23,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.omnaest.ui.angular.app.component.Component;
 import org.omnaest.ui.angular.app.component.Component.RenderContext;
+import org.omnaest.ui.angular.app.component.ComponentProvider;
 import org.omnaest.ui.angular.app.component.ComponentRenderResult;
 import org.omnaest.ui.angular.app.internal.CSSBuilder;
 import org.omnaest.ui.angular.app.internal.ComponentsHtmlBuilder;
@@ -35,9 +37,9 @@ import org.omnaest.ui.angular.utils.ResourceLoader;
 
 public class AngularApplicationImpl implements AngularApplication
 {
-	private String			baseUrl;
-	private String			title;
-	private List<Component>	components	= new ArrayList<>();
+	private String											baseUrl;
+	private String											title;
+	private List<ComponentProvider<? extends Component>>	componentProviders	= new ArrayList<>();
 
 	@Override
 	public AngularApplication withBaseUrl(URI baseUrl)
@@ -65,25 +67,29 @@ public class AngularApplicationImpl implements AngularApplication
 		ComponentsHtmlBuilder componentsHtmlBuilder = new ComponentsHtmlBuilder();
 		CSSBuilder cssBuilder = new CSSBuilder();
 
-		scriptBuilder.addJavaScript(ResourceLoader	.loadJavaScriptBinding(this)
-													.get());
+		scriptBuilder.addJavaScript("app", ResourceLoader	.loadJavaScriptBinding(this)
+															.get());
 
-		this.components	.stream()
-						.distinct()
-						.forEach(component ->
-						{
-							boolean withReference = true;
-							this.addToComponentsBuilder(scriptBuilder, componentsHtmlBuilder, cssBuilder, component, withReference);
-						});
-		this.components	.stream()
-						.flatMap(component -> component	.getSubComponents()
-														.stream())
-						.distinct()
-						.forEach(component ->
-						{
-							boolean withReference = false;
-							this.addToComponentsBuilder(scriptBuilder, componentsHtmlBuilder, cssBuilder, component, withReference);
-						});
+		List<? extends Component> components = this.componentProviders	.stream()
+																		.map(provider -> provider.get())
+																		.collect(Collectors.toList());
+
+		components	.stream()
+					.distinct()
+					.forEach(component ->
+					{
+						boolean withReference = true;
+						this.addToComponentsBuilder(scriptBuilder, componentsHtmlBuilder, cssBuilder, component, withReference);
+					});
+		components	.stream()
+					.flatMap(component -> component	.getSubComponents()
+													.stream())
+					.distinct()
+					.forEach(component ->
+					{
+						boolean withReference = false;
+						this.addToComponentsBuilder(scriptBuilder, componentsHtmlBuilder, cssBuilder, component, withReference);
+					});
 
 		String indexHtml = ResourceLoader	.load(this, "/index.html")
 											.replaceToken("${title}", StringUtils.defaultString(this.title))
@@ -116,7 +122,7 @@ public class AngularApplicationImpl implements AngularApplication
 		String reference = component.renderReference()
 									.asString();
 
-		scriptBuilder.addJavaScriptFrom(result);
+		scriptBuilder.addJavaScriptFrom(name, result);
 
 		componentsHtmlBuilder.addComponentHtml(name, reference, result, withReference);
 		cssBuilder.addCssFrom(result);
@@ -144,7 +150,14 @@ public class AngularApplicationImpl implements AngularApplication
 	@Override
 	public AngularApplication addComponent(Component component)
 	{
-		this.components.add(component);
+		return this.addComponent(() -> component);
+	}
+
+	@Override
+	public AngularApplication addComponent(ComponentProvider<? extends Component> componentProvider)
+	{
+		this.componentProviders.add(componentProvider);
 		return this;
 	}
+
 }
