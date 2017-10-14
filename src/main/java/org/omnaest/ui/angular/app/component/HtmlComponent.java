@@ -27,7 +27,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
 import org.omnaest.ui.angular.app.internal.raw.RawCompositeHtmlElement;
 import org.omnaest.ui.angular.app.internal.raw.RawDivElement;
 import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
@@ -79,18 +78,24 @@ public class HtmlComponent extends BasicComponent
 
 	private class TemplateHtmlElementImpl extends BasicHtmlElementImpl implements TemplateHtmlElement
 	{
-		private String template;
+		private Supplier<String> template;
 
 		@Override
 		public RawHtmlElement render(RenderContext context)
 		{
-			return new RawTemplateHtmlElement(this.template).setCssClass(this.cssClass)
-															.setStyle(this.style)
-															.setAttributes(this.attributes);
+			return new RawTemplateHtmlElement(this.template.get())	.setCssClass(this.cssClass)
+																	.setStyle(this.style)
+																	.setAttributes(this.attributes);
 		}
 
 		@Override
 		public TemplateHtmlElement setTemplate(String template)
+		{
+			return this.setTemplate(() -> template);
+		}
+
+		@Override
+		public TemplateHtmlElement setTemplate(Supplier<String> template)
 		{
 			this.template = template;
 			return this;
@@ -234,6 +239,8 @@ public class HtmlComponent extends BasicComponent
 	public static interface TemplateHtmlElement extends HtmlElement
 	{
 		public TemplateHtmlElement setTemplate(String template);
+
+		public TemplateHtmlElement setTemplate(Supplier<String> template);
 	}
 
 	public static interface CompositeHtmlElement extends HtmlElement
@@ -312,12 +319,24 @@ public class HtmlComponent extends BasicComponent
 
 	public void bindHtmlTemplate(Component component)
 	{
+		Consumer<Resource> resourceModifier = null;
+		this.bindHtmlTemplate(component, resourceModifier);
+	}
+
+	public void bindHtmlTemplate(Component component, Consumer<Resource> resourceModifier)
+	{
 		Resource resource = ResourceLoader.loadJavaHTMLBinding(component);
-		String template = resource.get();
-		if (StringUtils.isNotBlank(template))
+
+		this.addElement(new TemplateHtmlElementImpl().setTemplate(() ->
 		{
-			this.addElement(new TemplateHtmlElementImpl().setTemplate(template));
-		}
+			if (resourceModifier != null)
+			{
+				resourceModifier.accept(resource);
+			}
+
+			return resource.get();
+		}));
+
 	}
 
 }

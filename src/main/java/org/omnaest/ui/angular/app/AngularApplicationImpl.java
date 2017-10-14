@@ -18,6 +18,7 @@
 */
 package org.omnaest.ui.angular.app;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +35,24 @@ import org.omnaest.ui.angular.utils.ResourceLoader;
 
 public class AngularApplicationImpl implements AngularApplication
 {
-	private URI				baseUrl;
+	private String			baseUrl;
 	private String			title;
 	private List<Component>	components	= new ArrayList<>();
 
 	@Override
 	public AngularApplication withBaseUrl(URI baseUrl)
+	{
+		return this.withBaseUrl(baseUrl.toString());
+	}
+
+	@Override
+	public AngularApplication withBaseUrl(File baseUrl)
+	{
+		return this.withBaseUrl(baseUrl.toURI());
+	}
+
+	@Override
+	public AngularApplication withBaseUrl(String baseUrl)
 	{
 		this.baseUrl = baseUrl;
 		return this;
@@ -77,6 +90,7 @@ public class AngularApplicationImpl implements AngularApplication
 											.replaceToken("${scripts}", scriptBuilder.render())
 											.replaceToken("${css}", cssBuilder.render())
 											.replaceToken("${components}", componentsHtmlBuilder.renderComponentReferences())
+											.replaceToken("${baseUrl}", this.baseUrl != null ? this.baseUrl.toString() : "")
 											.get();
 		return new RenderResult()
 		{
@@ -121,7 +135,7 @@ public class AngularApplicationImpl implements AngularApplication
 	}
 
 	@Override
-	public AngularApplication setTitle(String title)
+	public AngularApplication withTitle(String title)
 	{
 		this.title = title;
 		return this;

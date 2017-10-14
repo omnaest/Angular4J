@@ -18,6 +18,7 @@
 */
 package org.omnaest.ui.angular.app;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Map;
 
@@ -37,7 +38,11 @@ public interface AngularApplication
 
 	public RenderResult renderHtml();
 
-	public AngularApplication setTitle(String title);
+	public AngularApplication withTitle(String title);
 
-	AngularApplication withBaseUrl(URI baseUrl);
+	public AngularApplication withBaseUrl(URI baseUrl);
+
+	public AngularApplication withBaseUrl(File baseUrl);
+
+	AngularApplication withBaseUrl(String baseUrl);
 }

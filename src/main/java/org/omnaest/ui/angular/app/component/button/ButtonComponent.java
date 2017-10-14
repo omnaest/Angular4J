@@ -20,9 +20,12 @@ package org.omnaest.ui.angular.app.component.button;
 
 import org.omnaest.ui.angular.app.component.DecoratorComponent;
 import org.omnaest.ui.angular.app.component.HtmlComponent;
+import org.omnaest.ui.angular.app.component.function.SimpleNamedFunction;
 
 public class ButtonComponent extends DecoratorComponent<HtmlComponent>
 {
+	private String label = "";
+
 	public ButtonComponent(String name)
 	{
 		super(new HtmlComponent(name));
@@ -30,9 +33,20 @@ public class ButtonComponent extends DecoratorComponent<HtmlComponent>
 		this.init();
 	}
 
+	public ButtonComponent setLabel(String label)
+	{
+		this.label = label;
+		return this;
+	}
+
 	private void init()
 	{
-		this.component.bindHtmlTemplate(this);
+		this.component.bindHtmlTemplate(this, resource -> resource.replaceToken("${label}", this.label));
+	}
+
+	public void onClick(Function function)
+	{
+		this.addFunction(new SimpleNamedFunction("onClick", function));
 	}
 
 }

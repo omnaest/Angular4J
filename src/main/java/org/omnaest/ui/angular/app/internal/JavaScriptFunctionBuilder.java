@@ -21,13 +21,13 @@ package org.omnaest.ui.angular.app.internal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.omnaest.ui.angular.app.component.Component.Function;
+import org.omnaest.ui.angular.app.component.Component.NamedFunction;
 
 public class JavaScriptFunctionBuilder
 {
 	private Map<String, String> functionNameToContent = new LinkedHashMap<>();
 
-	public void addJavaScriptFunction(Function function)
+	public void addJavaScriptFunction(NamedFunction function)
 	{
 		this.functionNameToContent.put(function.getName(), function.getJavaScriptFunction());
 	}
@@ -42,7 +42,7 @@ public class JavaScriptFunctionBuilder
 										String name = entry.getKey();
 										sb.append("\nself." + name + " = ");
 										sb.append(entry.getValue());
-										sb.append("\n");
+										sb.append(";\n");
 									});
 
 		return sb.toString();

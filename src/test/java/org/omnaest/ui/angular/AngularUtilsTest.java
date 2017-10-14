@@ -18,9 +18,16 @@
 */
 package org.omnaest.ui.angular;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.omnaest.ui.angular.app.AngularApplication.RenderResult;
 import org.omnaest.ui.angular.app.component.button.ButtonComponent;
+import org.omnaest.ui.angular.app.component.function.SimpleFunction;
 import org.omnaest.ui.angular.app.component.panel.PanelComponent;
 import org.omnaest.utils.JSONHelper;
 
@@ -33,13 +40,35 @@ public class AngularUtilsTest
 		PanelComponent panel1 = new PanelComponent("panel1");
 		ButtonComponent button1 = new ButtonComponent("button1");
 
+		button1.onClick(new SimpleFunction().append("alert('totoro');"));
+
 		RenderResult renderResult = AngularUtils.newInstance()
-												.setTitle("Unit test")
+												.withBaseUrl("") //"C:\\Temp\\angular"
+												.withTitle("Unit test")
 												.addComponent(panel1.withTransclusion(button1))
 												.renderHtml();
-		System.out.println(renderResult.getIndexHtml());
+		String indexHtml = renderResult.getIndexHtml();
+		System.out.println(indexHtml);
 
-		System.out.println(JSONHelper.prettyPrint(renderResult.getComponentsHtml()));
+		Map<String, String> componentsHtml = renderResult.getComponentsHtml();
+		System.out.println(JSONHelper.prettyPrint(componentsHtml));
+
+		File directory = new File("C:/Temp/angular");
+		FileUtils.writeStringToFile(new File(directory, "index.html"), indexHtml, StandardCharsets.UTF_8);
+		componentsHtml	.entrySet()
+						.forEach(entry ->
+						{
+							String fileName = entry.getKey() + ".html";
+							String content = entry.getValue();
+
+							try
+							{
+								FileUtils.writeStringToFile(new File(directory, fileName), content, StandardCharsets.UTF_8);
+							} catch (IOException e)
+							{
+								throw new IllegalStateException(e);
+							}
+						});
 	}
 
 }

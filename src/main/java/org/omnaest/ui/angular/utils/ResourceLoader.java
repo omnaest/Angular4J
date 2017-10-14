@@ -39,6 +39,7 @@ public class ResourceLoader
 		public Resource replaceToken(String token, String replacement);
 
 		public String get();
+
 	}
 
 	public static Resource loadJavaScriptBinding(Object instance)
@@ -96,6 +97,7 @@ public class ResourceLoader
 				{
 					return this.replace(Pattern.quote(token), Matcher.quoteReplacement(replacement));
 				}
+
 			};
 		} catch (IOException e)
 		{

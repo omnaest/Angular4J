@@ -46,7 +46,7 @@ public class DecoratorComponent<C extends Component> implements Component
 	}
 
 	@Override
-	public void addFunction(Function function)
+	public void addFunction(NamedFunction function)
 	{
 		this.component.addFunction(function);
 	}

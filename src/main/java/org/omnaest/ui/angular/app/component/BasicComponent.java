@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.omnaest.ui.angular.app.internal.JavaScriptFunctionBuilder;
 import org.omnaest.ui.angular.app.internal.raw.RawCustomHtmlElement;
 import org.omnaest.ui.angular.app.internal.raw.RawHtmlElement;
@@ -84,7 +85,7 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	private String determineTermplateUrl(RenderContext context)
 	{
 		String baseUrl = context.getBaseUrl();
-		return (baseUrl != null ? baseUrl + "/" : "") + this.name + "?" + System.currentTimeMillis();
+		return (baseUrl != null ? baseUrl + "/" : "") + this.name + ".html" + "?" + System.currentTimeMillis();
 	}
 
 	private String generateDependencyParameters()
@@ -96,9 +97,11 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 
 	private String generateDependencyInjection()
 	{
-		return this.services.stream()
-							.map(service -> "\"" + service.name() + "\"")
-							.collect(Collectors.joining(","));
+		String joined = this.services	.stream()
+										.map(service -> "\"" + service.name() + "\"")
+										.collect(Collectors.joining(","));
+		joined = StringUtils.isNotBlank(joined) ? joined + "," : "";
+		return joined;
 		//return "'$scope', '$http', '$interval'";
 	}
 
@@ -109,7 +112,7 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	}
 
 	@Override
-	public void addFunction(Function function)
+	public void addFunction(NamedFunction function)
 	{
 		this.functionBuilder.addJavaScriptFunction(function);
 	}
@@ -118,7 +121,7 @@ public abstract class BasicComponent implements Component, ServiceConsumer
 	public void addFunction(ServiceFunction function)
 	{
 		//
-		this.addFunction((Function) function);
+		this.addFunction((NamedFunction) function);
 
 		//
 		List<Service> dependencies = function.getDependencies();

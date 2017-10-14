@@ -18,7 +18,6 @@
 */
 package org.omnaest.ui.angular.app.component;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +29,10 @@ public interface Component
 	public static interface Function
 	{
 		public String getJavaScriptFunction();
+	}
 
+	public static interface NamedFunction extends Function
+	{
 		public String getName();
 	}
 
@@ -61,11 +63,11 @@ public interface Component
 
 	public String getName();
 
-	public void addFunction(Function function);
+	public void addFunction(NamedFunction function);
 
 	public void addFunction(ServiceFunction function);
 
-	RawHtmlElement renderReference(Map<String, String> bindings, RawHtmlElement...transclusions);
+	RawHtmlElement renderReference(Map<String, String> bindings, RawHtmlElement... transclusions);
 
 	Component withTransclusion(List<Component> components);
 
